@@ -2,12 +2,20 @@
 #   app        -> http://localhost:8000/metrics
 #   prometheus -> http://localhost:9090
 #   grafana    -> http://localhost:3000
+#
+# Ports are bound to 127.0.0.1, so the services are only reachable from
+# this computer, not from other devices on the same network.
+
+# Fixed project name: containers and volumes are called "outlier-detector-..."
+# no matter what the folder is called.
+name: outlier-detector
+
 services:
   app:
     build: .
     restart: unless-stopped
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
     volumes:
       - app-data:/app/data            # alerts.jsonl survives restarts
 
@@ -19,7 +27,7 @@ services:
       - --storage.tsdb.path=/prometheus
       - --storage.tsdb.retention.time=15d
     ports:
-      - "9090:9090"
+      - "127.0.0.1:9090:9090"
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus-data:/prometheus   # time-series database
@@ -30,10 +38,12 @@ services:
     image: grafana/grafana:11.3.0
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
     environment:
-      # Fails fast with a clear message if .env is missing the password.
-      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?Set GRAFANA_ADMIN_PASSWORD in .env}
+      # Optional: set GRAFANA_ADMIN_PASSWORD in a .env file (see .env.example).
+      # Without it the login is admin / admin, and Grafana asks you to pick a
+      # new password the first time you log in.
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
       GF_AUTH_ANONYMOUS_ENABLED: "true"     # anyone can view without logging in...
       GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer    # ...but only view, not edit
       GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /etc/grafana/provisioning/dashboards/outlier-detection.json

@@ -1,0 +1,4 @@
+# Keep line endings right for each platform's scripts,
+# whatever the git settings on the computer that clones the repo.
+*.sh  text eol=lf
+*.bat text eol=crlf
