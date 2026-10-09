@@ -1,0 +1,45 @@
+# All tunable numbers live here. Change behaviour without touching code.
+
+stream:
+  interval_seconds: 1.0     # one reading per sensor per (simulated) second
+  fast_mode: false          # true = don't sleep, process as fast as possible
+  max_ticks: null           # null = run forever; a number = stop after N ticks
+  seed: 42                  # same seed -> same data; null = different every run
+  anomaly_probability: 0.004  # chance per sensor per tick that an anomaly starts
+  sensors:
+    temp:                   # degrees C
+      baseline: 22.0
+      noise_std: 0.2
+      drift_amplitude: 1.0  # slow, harmless wave (should NOT trigger alerts)
+      drift_period: 3600    # in points
+    cpu:                    # percent
+      baseline: 40.0
+      noise_std: 3.0
+      drift_amplitude: 10.0
+      drift_period: 1800
+    pressure:               # hPa
+      baseline: 1013.0
+      noise_std: 0.5
+      drift_amplitude: 2.0
+      drift_period: 7200
+
+detector:
+  window_size: 100          # rolling window of "normal" points
+  warmup: 30                # points to collect before judging anything
+  threshold: 3.0            # |z| above this = outlier (kept out of the window)
+  method: zscore            # zscore (mean/std) or robust (median/MAD)
+
+alerts:
+  enter_z: 3.0              # a point counts toward an alert if |z| > enter_z
+  exit_z: 2.0               # a point counts as calm if |z| < exit_z
+  k_consecutive: 3          # outliers in a row needed to open an alert
+  m_consecutive: 5          # calm points in a row needed to resolve it
+  cooldown_seconds: 60      # after RESOLVED, suppress new alerts for this long
+
+notifier:
+  console_colors: true
+  jsonl_path: data/alerts.jsonl   # in Docker, data/ is a named volume
+
+metrics:
+  enabled: false            # serve /metrics? (Docker turns this on with --metrics)
+  port: 8000

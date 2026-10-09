@@ -1,0 +1,11 @@
+# Prometheus pulls ("scrapes") http://app:8000/metrics every 5 seconds.
+# "app" is the service name in docker-compose.yml; Docker's internal DNS
+# resolves it to the app container.
+global:
+  scrape_interval: 5s
+  evaluation_interval: 5s
+
+scrape_configs:
+  - job_name: outlier-detector
+    static_configs:
+      - targets: ["app:8000"]

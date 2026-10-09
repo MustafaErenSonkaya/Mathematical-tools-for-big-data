@@ -1,1 +1,4 @@
-prometheus_client==0.21.1
+numpy
+pyyaml
+prometheus_client
+pytest

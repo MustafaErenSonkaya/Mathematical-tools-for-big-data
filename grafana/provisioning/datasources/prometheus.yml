@@ -1,8 +1,14 @@
+# Grafana reads this at startup and creates the datasource automatically.
+# The fixed uid lets the dashboard JSON refer to this exact datasource.
 apiVersion: 1
+
 datasources:
   - name: Prometheus
     uid: prometheus
     type: prometheus
-    access: proxy
+    access: proxy             # Grafana's server talks to Prometheus, not the browser
     url: http://prometheus:9090
     isDefault: true
+    editable: false
+    jsonData:
+      timeInterval: 5s        # match the scrape interval

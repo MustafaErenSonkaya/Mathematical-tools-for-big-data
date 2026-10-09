@@ -1,6 +1,12 @@
+# Tells Grafana to load every dashboard JSON file in this folder at startup.
 apiVersion: 1
+
 providers:
-  - name: sensors
+  - name: outlier-detection
     type: file
+    folder: ""
+    disableDeletion: true
+    allowUiUpdates: false     # the JSON file is the source of truth
+    updateIntervalSeconds: 30 # pick up edits to the JSON without a restart
     options:
       path: /etc/grafana/provisioning/dashboards
