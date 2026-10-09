@@ -113,3 +113,7 @@ docker-compose.yml            runs app, Prometheus and Grafana together
 ## Tuning
 
 All the knobs are at the top of [`app.py`](app.py): window size, z-score limit, how many outliers trigger an alert, how many normal readings resolve it, and the cooldown length.
+
+## How it was built
+
+This project was built in a conversation with Claude Code. The full chat is in [`CHAT.md`](CHAT.md).
